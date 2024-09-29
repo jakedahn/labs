@@ -6,12 +6,15 @@ import { render } from "@commontools/common-html";
 import { Charm, ID, UI, NAME, addCharms, launch } from "../data.js";
 import { CellImpl, isCell, charmById } from "@commontools/common-runner";
 import { repeat } from "lit/directives/repeat.js";
-import { iframe} from "../recipes/iframe.js";
+import { iframe } from "../recipes/iframe.js";
+
+import { TWStyles } from "../styles/twout.js";
+
+console.log("TWStyles", TWStyles);
 
 @customElement("common-window-manager")
 export class CommonWindowManager extends LitElement {
   static override styles = [
-    style.baseStyles,
     css`
       :host {
         display: flex;
@@ -20,6 +23,7 @@ export class CommonWindowManager extends LitElement {
         width: 100%;
         height: 95vh;
         padding: 20px 0; /* Add vertical padding */
+        --tailwind-lit-me: 🔥;
       }
       .window {
         flex: 0 0 auto;
@@ -32,7 +36,9 @@ export class CommonWindowManager extends LitElement {
         border-radius: var(--radius);
         background-color: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1),
+        box-shadow:
+          0 10px 20px rgba(0, 0, 0, 0.1),
+          0 6px 6px rgba(0, 0, 0, 0.1),
           0 0 0 1px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
         overflow: hidden;
@@ -63,23 +69,27 @@ export class CommonWindowManager extends LitElement {
       @keyframes highlight {
         0%,
         100% {
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1),
-            0 6px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+          box-shadow:
+            0 10px 20px rgba(0, 0, 0, 0.1),
+            0 6px 6px rgba(0, 0, 0, 0.1),
+            0 0 0 1px rgba(0, 0, 0, 0.05);
         }
         50% {
-          box-shadow: 0 0 20px 5px rgba(255, 215, 0, 0.5),
-            0 6px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+          box-shadow:
+            0 0 20px 5px rgba(255, 215, 0, 0.5),
+            0 6px 6px rgba(0, 0, 0, 0.1),
+            0 0 0 1px rgba(0, 0, 0, 0.05);
         }
       }
       .highlight {
         animation: highlight 1s ease-in-out;
       }
     `,
+    TWStyles,
   ];
 
   @property({ type: Array })
   charms: CellImpl<Charm>[] = [];
-
 
   private charmRefs: Map<number, Ref<HTMLElement>> = new Map();
   private newCharmRefs: [CellImpl<Charm>, Ref<HTMLElement>][] = [];
@@ -87,18 +97,21 @@ export class CommonWindowManager extends LitElement {
   handleUniboxSubmit(event: CustomEvent, charm: CellImpl<Charm>) {
     const value = event.detail.value;
     const shiftHeld = event.detail.shiftHeld;
-    console.log('Unibox submitted:', value);
+    console.log("Unibox submitted:", value);
 
     if (shiftHeld) {
-      charm.asSimpleCell(["addToPrompt"]).send({ prompt: value } as any)
+      charm.asSimpleCell(["addToPrompt"]).send({ prompt: value } as any);
     } else {
-      const charmValues = charm.getAsProxy()
-      let fieldsToInclude = Object.entries(charmValues).reduce((acc, [key, value]) => {
-        if (!key.startsWith('$') && !key.startsWith('_')) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as any);
+      const charmValues = charm.getAsProxy();
+      let fieldsToInclude = Object.entries(charmValues).reduce(
+        (acc, [key, value]) => {
+          if (!key.startsWith("$") && !key.startsWith("_")) {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {} as any
+      );
 
       if (charmValues.data) {
         fieldsToInclude = charmValues.data;
@@ -108,7 +121,7 @@ export class CommonWindowManager extends LitElement {
     }
   }
 
-  input: string = '';
+  input: string = "";
 
   override render() {
     return html`
@@ -133,10 +146,27 @@ export class CommonWindowManager extends LitElement {
               <common-screen-element>
                 <common-system-layout>
                   <div ${ref(charmRef)}></div>
-                  <div slot="secondary"><common-annotation .query=${
-                    charmValues[NAME] ?? ""
-                  } .target=${charmId} .data=${charmValues} ></common-annotation></div>
-                  <common-unibox slot="search" value=${this.input} @submit=${(e) => this.handleUniboxSubmit(e, charm)} placeholder="" label=">">
+                  <div slot="secondary bg-purple-500">
+                    <common-annotation
+                      .query=${charmValues[NAME] ?? ""}
+                      .target=${charmId}
+                      .data=${charmValues}
+                    ></common-annotation>
+                  </div>
+
+                  <div
+                    class="text-yellow-500 bg-purple-500 rounded-3xl p-2 text-center"
+                  >
+                    Hello
+                  </div>
+
+                  <common-unibox
+                    slot="search"
+                    value=${this.input}
+                    @submit=${(e) => this.handleUniboxSubmit(e, charm)}
+                    placeholder=""
+                    label=">"
+                  />
                 </common-system-layout>
               </common-screen-element>
             </div>

@@ -7,10 +7,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run build && npx vite",
+    "dev": "concurrently \"npm run build\" \"npx vite\" \"npx tailwindcss -w -i ./src/styles/tailwind.css -o ./src/styles/twout.css\" \"npx twlitme --input ./src/styles/twout.css --output ./src/styles/twout.js --watch\"",
     "test": "npm run build && vitest",
     "build": "wireit",
-    "clean": "wireit"
+    "clean": "wireit",
+    "twlitme": "npx twlitme --input ./src/styles/tailwind.css --output ./src/styles/tailwindstyles.js",
+    "twlitme:watch": "npx twlitme --input ./src/styles/tailwind.css --output ./src/styles/tailwindstyles.js --watch"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,11 @@
   },
   "homepage": "https://github.com/commontoolsinc/labs#readme",
   "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.1",
     "jsdom": "^25.0.0",
+    "tailwindcss": "^3.4.13",
+    "twlitme": "^1.0.3",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vitest": "^1.6.0",
@@ -45,9 +51,9 @@
   },
   "dependencies": {
     "@commontools/common-builder": "^0.0.1",
-    "@commontools/common-runner": "^0.0.1",
     "@commontools/common-frp": "^0.0.1",
     "@commontools/common-html": "^0.0.1",
+    "@commontools/common-runner": "^0.0.1",
     "@commontools/common-ui": "^0.0.1",
     "@commontools/llm-client": "^0.0.1",
     "@commontools/lookslike-sagas": "^0.0.1"
